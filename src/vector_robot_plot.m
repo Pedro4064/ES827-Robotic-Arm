@@ -1,4 +1,4 @@
-function vector_robot_plot(A1, A2, sym_thetas, num_thetas, lengths)
+function vector_robot_plot(A1, A2, A3, A4, sym_thetas, num_thetas, lengths)
 %VECTOR_ROBOT_PLOT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,8 +6,8 @@ function vector_robot_plot(A1, A2, sym_thetas, num_thetas, lengths)
 % counterparts
 A1_sub = subs(A1, sym_thetas(1), num_thetas(1));
 A2_sub = subs(A2, sym_thetas(2), num_thetas(2));
-%A3_sub = subs(A3, theta_3, thetas(3));
-%A4_sub = subs(A4, theta_4, thetas(4));
+A3_sub = subs(A3, sym_thetas(3), num_thetas(3));
+A4_sub = subs(A4, sym_thetas(4), num_thetas(4));
 %A5_sub = subs(A5, theta_5, thetas(5));
 
 % Plot first upright link (as it is alwas only Z and does not change
@@ -23,6 +23,21 @@ hold on;
 rot_trans = A1_sub(1:3, 1:3)*A2_sub(1:3, 1:3);
 l2_vector = rot_trans * [lengths(2); 0; 0];
 quiver3(0, 0, lengths(1), l2_vector(1), l2_vector(2), l2_vector(3));
+
+% Now calculate the vector representation of the third link. Since the
+% first two transformation matrixes were already multiplied, re-use the
+% resulting matrix and just post-multiply the third rotation matrix (from
+% the A3 matrix). 
+% Like its predecessor, the starting position is only on its x-axis
+rot_trans = rot_trans * A3_sub(1:3, 1:3);
+l3_vector = rot_trans * [lengths(3); 0; 0];
+quiver3(l2_vector(1), l2_vector(2), lengths(1) + l2_vector(3), l3_vector(1), l3_vector(2), l3_vector(3));
+
+% Calculate the vector representation of the fourth link
+rot_trans = rot_trans * A4_sub(1:3, 1:3);
+l4_starting_points = [0; 0; lengths(1)] + l2_vector + l3_vector
+l4_vector = rot_trans * [lengths(4); 0; 0];
+quiver3(l4_starting_points(1), l4_starting_points(2), l4_starting_points(3), l4_vector(1), l4_vector(2), l4_vector(3));
 
 hold off;
 end
