@@ -9,11 +9,12 @@ A1 = link_transformation_matrix_gen(0, deg2rad(90), l1, theta_1);
 A2 = link_transformation_matrix_gen(l2, 0, 0, theta_2);
 A3 = link_transformation_matrix_gen(l3, 0, 0, theta_3);
 
-A4 = link_transformation_matrix_gen(l4, 0, 0, theta_4);
-A5 = link_transformation_matrix_gen(0,  0, 0, theta_5);
+A4 = link_transformation_matrix_gen(0, deg2rad(-90), 0, theta_4);
+A5 = link_transformation_matrix_gen(0,  0, l4, theta_5);
 
 A_transformation_full = eval(simplify(A1*A2*A3*A4*A5));
-
+%%
+subs(A_transformation_full, [theta_1, theta_2, theta_3, theta_4, theta_5, l1, l2, l3, l4], [0, 0, 0, deg2rad(0), 0, 10, 5, 5, 10])
 %% Inverse Kinematics
 target_eqs  = reshape(A_transformation_full(1:3, 1:4), [], 1);
 inverse_jac = jacobian(target_eqs, [theta_1, theta_2, theta_3, theta_4, theta_5]);

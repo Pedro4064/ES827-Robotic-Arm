@@ -1,4 +1,4 @@
-function vector_robot_plot(A1, A2, A3, A4, sym_thetas, num_thetas, lengths)
+function vector_robot_plot(A1, A2, A3, A4, A5, sym_thetas, num_thetas, lengths)
 %VECTOR_ROBOT_PLOT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,7 +8,7 @@ A1_sub = subs(A1, sym_thetas(1), num_thetas(1));
 A2_sub = subs(A2, sym_thetas(2), num_thetas(2));
 A3_sub = subs(A3, sym_thetas(3), num_thetas(3));
 A4_sub = subs(A4, sym_thetas(4), num_thetas(4));
-%A5_sub = subs(A5, theta_5, thetas(5));
+A5_sub = subs(A5, sym_thetas(5), num_thetas(5));
 
 % Plot first upright link (as it is alwas only Z and does not change
 % representation since it only rotates around z axis)
@@ -33,12 +33,32 @@ rot_trans = rot_trans * A3_sub(1:3, 1:3);
 l3_vector = rot_trans * [lengths(3); 0; 0];
 quiver3(l2_vector(1), l2_vector(2), lengths(1) + l2_vector(3), l3_vector(1), l3_vector(2), l3_vector(3));
 
-% Calculate the vector representation of the fourth link
-rot_trans = rot_trans * A4_sub(1:3, 1:3);
-l4_starting_points = [0; 0; lengths(1)] + l2_vector + l3_vector
-l4_vector = rot_trans * [lengths(4); 0; 0];
-quiver3(l4_starting_points(1), l4_starting_points(2), l4_starting_points(3), l4_vector(1), l4_vector(2), l4_vector(3));
+% Calculate the fourth rotation. Since it is at the wrist of our robot it
+% does not have a lenght and therefore will not be ploted, bur rather it
+% will be ploted on the next step
+%rot_trans = rot_trans * A4_sub(1:3, 1:3);
+%l4_starting_points = [0; 0; lengths(1)] + l2_vector + l3_vector;
+%l4_vector = rot_trans * [lengths(4); 0; 0]
+%quiver3(l4_starting_points(1), l4_starting_points(2), l4_starting_points(3), l4_vector(1), l4_vector(2), l4_vector(3));
 
+% Calculate and plot the axis representing the end-factor of our robot
+a = A5_sub(1:3, 1:3) * [0;0;lengths(5)]
+rot_trans =  A1_sub(1:3, 1:3)* A2_sub(1:3, 1:3)* A3_sub(1:3, 1:3) * A4_sub(1:3, 1:3) * A5_sub(1:3, 1:3)
+l5_starting_points = [0; 0; lengths(1)] + l2_vector + l3_vector;
+l5_vector = rot_trans * [0;0;lengths(5)+lengths(4)]
+quiver3(l5_starting_points(1), l5_starting_points(2), l5_starting_points(3), l5_vector(1), l5_vector(2), l5_vector(3));
+
+ l5_starting_points = l5_starting_points + l5_vector;
+ l5_x_unit_vector = rot_trans * [1;0;0]
+l5_y_unit_vector = rot_trans * [0;1;0]
+l5_z_unit_vector = rot_trans * [0;0;1]
+quiver3([l5_starting_points(1) l5_starting_points(1) l5_starting_points(1)], ...
+        [l5_starting_points(2) l5_starting_points(2) l5_starting_points(2)],...
+        [l5_starting_points(3) l5_starting_points(3) l5_starting_points(3)],...
+        [l5_x_unit_vector(1) l5_y_unit_vector(1) l5_z_unit_vector(1)],...
+        [l5_x_unit_vector(2) l5_y_unit_vector(2) l5_z_unit_vector(2)],...
+        [l5_x_unit_vector(3) l5_y_unit_vector(3) l5_z_unit_vector(3)]);
+% quiver3(l5_vector(1) + l5_starting_points(1), l5_vector(2) + l5_starting_points(2), l5_vector(3) + l5_starting_points(3), l5_x_unit_vector(1), l5_x_unit_vector(2), l5_x_unit_vector(3));
 hold off;
 end
 
