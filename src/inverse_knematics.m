@@ -9,8 +9,8 @@ A1 = link_transformation_matrix_gen(0, deg2rad(90), l1, theta_1);
 A2 = link_transformation_matrix_gen(l2, 0, 0, theta_2);
 A3 = link_transformation_matrix_gen(l3, 0, 0, theta_3);
 
-A4 = link_transformation_matrix_gen(0, deg2rad(-90), 0, theta_4);
-A5 = link_transformation_matrix_gen(0,  0, l4, theta_5);
+A4 = link_transformation_matrix_gen(l4+l5, deg2rad(-90), 0, theta_4);
+A5 = link_transformation_matrix_gen(0,  0, 0, theta_5);
 
 A_transformation_full = eval(simplify(A1*A2*A3*A4*A5));
 %%
