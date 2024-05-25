@@ -35,3 +35,24 @@ a_3 = @(d) atan2(sqrt(1 - d^2), d);
 
 % Theta 4 - Inversa
 a_4 = @() theta_2 + theta_3;
+
+%% Trajectory Planning - Circular Motion
+
+% Trapezoidal Velocity Profile
+total_time = 20;                            % In seconds
+acceleration_time   = (total_time / 2)/2;   % Ramp up
+deceleration_time   = acceleration_time;    % Ramp Down
+const_velocity_time = total_time / 2;       % Constant velocity
+
+radius = 0.5;               % In meters
+max_velocity = deg2rad(30); % Max angular velocity of 30deg/s in rad/s
+
+points = 1000;
+time = linspace(0, total_time, points);
+angular_velocities = zeros(1, points);
+
+angular_velocities(time <=acceleration_time) = (max_velocity/acceleration_time) * time(time <= acceleration_time);
+angular_velocities(time > acceleration_time & time <= const_velocity_time + acceleration_time) = max_velocity;
+angular_velocities(time > const_velocity_time + acceleration_time) = max_velocity - ((max_velocity / deceleration_time) * (time(time>acceleration_time+const_velocity_time) - (acceleration_time + const_velocity_time)));
+
+plot(time, angular_velocities);
