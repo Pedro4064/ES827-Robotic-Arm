@@ -39,12 +39,12 @@ a_4 = @() theta_2 + theta_3;
 %% Trajectory Planning - Circular Motion
 
 % Trapezoidal Velocity Profile
-total_time = 20;                            % In seconds
+total_time = 30;                            % In seconds
 acceleration_time   = (total_time / 2)/2;   % Ramp up
 deceleration_time   = acceleration_time;    % Ramp Down
 const_velocity_time = total_time / 2;       % Constant velocity
 
-radius = 0.5;               % In meters
+radius = 0.25;               % In meters
 max_velocity = deg2rad(30); % Max angular velocity of 30deg/s in rad/s
 
 points = 1000;
@@ -56,3 +56,17 @@ angular_velocities(time > acceleration_time & time <= const_velocity_time + acce
 angular_velocities(time > const_velocity_time + acceleration_time) = max_velocity - ((max_velocity / deceleration_time) * (time(time>acceleration_time+const_velocity_time) - (acceleration_time + const_velocity_time)));
 
 plot(time, angular_velocities);
+
+%% Now we can decompose the angular velocity into X and Y velocities
+angles = cumtrapz(time, angular_velocities);
+x_velocity = radius * angular_velocities .* sin(angles);
+y_velocity = radius * angular_velocities .* cos(angles);
+
+plot(time, x_velocity, time, y_velocity);
+legend('x Velocity', 'y Velocity');
+%%
+x_integral = cumtrapz(time, x_velocity);
+y_integral = cumtrapz(time, y_velocity);
+
+scatter(x_integral, y_integral);
+axis equal;
