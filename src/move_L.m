@@ -1,4 +1,4 @@
-function [pp_x,pp_y] = move_L(x_t,y_t, z_t, vx, vy, vz, time, num_waypoints)
+function [pp_x,pp_y, pp_z] = move_L(x_t,y_t, z_t, vx, vy, vz, time, num_waypoints)
 %MOVE_L Summary of this function goes here
 %   Detailed explanation goes here
 
