@@ -70,3 +70,238 @@ y_integral = cumtrapz(time, y_velocity);
 
 scatter(x_integral, y_integral);
 axis equal;
+
+%%
+% Define the waypoints
+waypoints = [0, 1, 4, 9, 16]; % example waypoints
+
+% Assume equally spaced times
+num_points = length(waypoints);
+times = linspace(0, num_points-1, num_points);
+
+% Boundary conditions
+initial_velocity = 0;
+initial_acceleration = 0;
+final_velocity = 0;
+final_acceleration = 0;
+
+% Compute the cubic spline with specified boundary conditions
+% Using the csape function to specify the clamped boundary conditions
+pp = csape(times, waypoints, 'clamped', [initial_velocity, final_velocity]);
+
+% Generate a finer set of points for smooth plotting
+t_fine = linspace(min(times), max(times), 100);
+y_fine = ppval(pp, t_fine);
+
+% Plot the results
+figure;
+plot(times, waypoints, 'o', t_fine, y_fine, '-');
+title('Cubic Spline Interpolation with Clamped Boundary Conditions');
+xlabel('Time');
+ylabel('Position');
+legend('Waypoints', 'Cubic Spline');
+grid on;
+%%
+% Define the 2D waypoints
+waypoints = [0, 0; 1, 2; 4, 5; 9, 7; 16, 10]; % example 2D waypoints
+
+% Separate the waypoints into x and y components
+x = waypoints(:, 1);
+y = waypoints(:, 2);
+
+% Assume equally spaced times
+num_points = length(x);
+times = linspace(0, num_points-1, num_points);
+
+% Boundary conditions
+initial_velocity_x = 0;
+final_velocity_x = 0;
+initial_velocity_y = 0;
+final_velocity_y = 0;
+
+% Compute the cubic spline with specified boundary conditions for x
+pp_x = csape(times, x, 'clamped', [initial_velocity_x, final_velocity_x]);
+
+% Compute the cubic spline with specified boundary conditions for y
+pp_y = csape(times, y, 'clamped', [initial_velocity_y, final_velocity_y]);
+
+% Generate a finer set of points for smooth plotting
+t_fine = linspace(min(times), max(times), 100);
+x_fine = ppval(pp_x, t_fine);
+y_fine = ppval(pp_y, t_fine);
+
+% Plot the results
+figure;
+plot(x, y, 'o', x_fine, y_fine, '-');
+title('2D Cubic Spline Interpolation with Clamped Boundary Conditions');
+xlabel('X');
+ylabel('Y');
+legend('Waypoints', 'Cubic Spline');
+grid on;
+axis equal;
+%%
+% Parameters for the circular pattern
+radius = 5;
+num_waypoints = 100; % number of waypoints on the circle
+theta = linspace(0, 2*pi, num_waypoints + 1); % angles for the waypoints
+theta(end) = []; % remove the last point to avoid duplication
+
+% Generate waypoints on the circle
+x = radius * cos(theta);
+y = radius * sin(theta);
+
+% Assume equally spaced times
+times = linspace(0, num_waypoints-1, num_waypoints);
+
+% Boundary conditions for x and y (zero velocity at start and end)
+initial_velocity_x = 0;
+final_velocity_x = 0;
+initial_velocity_y = 0;
+final_velocity_y = 0;
+
+% Compute the cubic spline with specified boundary conditions for x
+pp_x = csape(times, x, 'clamped', [initial_velocity_x, final_velocity_x]);
+
+% Compute the cubic spline with specified boundary conditions for y
+pp_y = csape(times, y, 'clamped', [initial_velocity_y, final_velocity_y]);
+
+% Generate a finer set of points for smooth plotting
+t_fine = linspace(min(times), max(times), 100);
+x_fine = ppval(pp_x, t_fine);
+y_fine = ppval(pp_y, t_fine);
+
+% Plot the results
+figure;
+plot(x, y, 'o', x_fine, y_fine, '-');
+title('2D Cubic Spline Interpolation on a Circular Pattern');
+xlabel('X');
+ylabel('Y');
+legend('Waypoints', 'Cubic Spline');
+grid on;
+axis equal;
+%%
+
+% Parameters for the circular pattern
+radius = 5;
+num_waypoints = 100; % number of waypoints on the circle
+theta = linspace(0, 2*pi, num_waypoints + 1); % angles for the waypoints
+theta(end) = []; % remove the last point to avoid duplication
+
+% Generate waypoints on the circle
+x = radius * cos(theta);
+y = radius * sin(theta);
+
+% Assume equally spaced times
+times = linspace(0, num_waypoints-1, num_waypoints);
+
+% Boundary conditions for x and y (zero velocity at start and end)
+initial_velocity_x = 0;
+final_velocity_x = 0;
+initial_velocity_y = 0;
+final_velocity_y = 0;
+
+% Compute the cubic spline with specified boundary conditions for x
+pp_x = csape(times, x, 'clamped', [initial_velocity_x, final_velocity_x]);
+
+% Compute the cubic spline with specified boundary conditions for y
+pp_y = csape(times, y, 'clamped', [initial_velocity_y, final_velocity_y]);
+
+% Generate a finer set of points for smooth plotting
+t_fine = linspace(min(times), max(times), 100);
+x_fine = ppval(pp_x, t_fine);
+y_fine = ppval(pp_y, t_fine);
+
+% Compute the derivatives (velocities)
+pp_dx = fnder(pp_x, 1);
+pp_dy = fnder(pp_y, 1);
+vx_fine = ppval(pp_dx, t_fine);
+vy_fine = ppval(pp_dy, t_fine);
+
+% Compute the magnitude of the velocity
+v_fine = sqrt(vx_fine.^2 + vy_fine.^2);
+
+% Plot the 2D path
+figure;
+subplot(2, 1, 1);
+plot(x, y, 'o', x_fine, y_fine, '-');
+title('2D Cubic Spline Interpolation on a Circular Pattern');
+xlabel('X');
+ylabel('Y');
+legend('Waypoints', 'Cubic Spline');
+grid on;
+axis equal;
+
+% Plot the velocity magnitude
+subplot(2, 1, 2);
+plot(t_fine, v_fine, '-');
+title('Velocity Magnitude along the Path');
+xlabel('Time');
+ylabel('Velocity Magnitude');
+grid on;
+
+%%
+% Parameters for the circular pattern
+radius = 5;
+num_waypoints = 50; % number of waypoints on the circle
+theta = linspace(0, 2*pi, num_waypoints + 1); % angles for the waypoints
+theta(end) = []; % remove the last point to avoid duplication
+
+% Generate waypoints on the circle
+x = radius * cos(theta);
+y = radius * sin(theta);
+
+% Assume equally spaced times
+num_points = length(x);
+times = linspace(0, num_waypoints-1, num_waypoints);
+
+% Boundary conditions for x and y (zero velocity at start and end)
+initial_velocity_x = 0;
+final_velocity_x = 0;
+initial_velocity_y = 0;
+final_velocity_y = 0;
+
+% Compute the cubic spline with specified boundary conditions for x
+pp_x = csape(times, x, 'clamped', [initial_velocity_x, final_velocity_x]);
+
+% Compute the cubic spline with specified boundary conditions for y
+pp_y = csape(times, y, 'clamped', [initial_velocity_y, final_velocity_y]);
+
+% Generate a finer set of points for smooth plotting
+t_fine = linspace(min(times), max(times), 100);
+x_fine = ppval(pp_x, t_fine);
+y_fine = ppval(pp_y, t_fine);
+
+% Compute the derivatives (velocities)
+pp_dx = fnder(pp_x, 1);
+pp_dy = fnder(pp_y, 1);
+vx_fine = ppval(pp_dx, t_fine);
+vy_fine = ppval(pp_dy, t_fine);
+
+% Compute the magnitude of the velocity
+v_fine = sqrt(vx_fine.^2 + vy_fine.^2);
+
+% Plot the 2D path
+figure;
+subplot(3, 1, 1);
+plot(x, y, 'o', x_fine, y_fine, '-');
+title('2D Cubic Spline Interpolation on a Circular Pattern');
+xlabel('X');
+ylabel('Y');
+legend('Waypoints', 'Cubic Spline');
+grid on;
+axis equal;
+
+% Plot the velocity components vx and vy
+subplot(3, 1, 2);
+plot(t_fine, vx_fine, '-');
+title('Velocity in X Direction');
+xlabel('Time');
+ylabel('Velocity in X');
+grid on;
+
+subplot(3, 1, 3);
+plot(t_fine, vy_fine, '-');
+title('Velocity in Y Direction');
+xlabel('Time');
+ylabel('Velocity in Y');
+grid on;
