@@ -1,20 +1,30 @@
 function [pp_x,pp_y, pp_z] = move_L(x_t,y_t, z_t, vx, vy, vz, time, num_waypoints)
-%MOVE_L Summary of this function goes here
-%   Detailed explanation goes here
+%MOVE_L Calculate the cubic piece-wise polynomials for a linear movement between ending and starting points, and 
+%specified starting and ending velocities, the total number of waypoints to subedvide the overall trajectory (as
+%to ensure a linear workspace trajectory), and the total time it takes for the movement to complete. The coeficientes 
+%are for the following polynomial: q_i(t) = a0 + a1(t - ti) + a2(t-ti)^2 + a3(t - ti)^3, where ti is the starting
+%time of that specific segment. 
+%   [pp_x, pp_y, pp_z] = MOVE_L([0 10], [0 0], [0 15], [0 0], [0 0], [0 0], [0 15], (15-0)*1000) Calculate the cubic 
+%piece-wise polynomial for the linear movement between the points {x=0, y=0, z=0}cm and {x=10, y=0, z=15}cm in 15 seconds, 
+%with 15000 intermediate waypoints, so the movement between each waypoint takes 1ms.
+%
+% See also MOVE_L, PPVAL
 
 % Generate waypoints on the line
 x = linspace(x_t(1), x_t(2), num_waypoints);
 y = linspace(y_t(1), y_t(2), num_waypoints);
 z = linspace(z_t(1), z_t(2), num_waypoints);
 
-% Assume equally spaced times
-times = linspace(0, time(2), num_waypoints);
+% Assume equally spaced times, this makes the implementation easier, e.g you can 
+times = linspace(time(1), time(2), num_waypoints);
 
-% Boundary conditions for x and y (zero velocity at start and end)
+% Boundary conditions 
 initial_velocity_x = vx(1);
 final_velocity_x   = vx(2);
+
 initial_velocity_y = vy(1);
 final_velocity_y   = vy(2);
+
 initial_velocity_z = vz(1);
 final_velocity_z   = vz(2);
 
@@ -54,7 +64,7 @@ legend('Waypoints', 'Cubic Spline');
 grid on;
 axis equal;
 
-% Plot the velocity components vx and vy
+% Plot the velocity components vx, vy, vz
 subplot(4, 1, 2);
 plot(t_fine, vx_fine, '-');
 title('Velocity in X Direction');
